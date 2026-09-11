@@ -6,7 +6,14 @@ import { btnPrimary, input, label } from "@/lib/ui";
 
 export default function AddEmployeeForm() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", email: "", department: "", designation: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    department: "",
+    designation: "",
+    phone: "",
+    employeeCode: "",
+  });
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -30,7 +37,7 @@ export default function AddEmployeeForm() {
         setSubmitting(false);
         return;
       }
-      setForm({ name: "", email: "", department: "", designation: "" });
+      setForm({ name: "", email: "", department: "", designation: "", phone: "", employeeCode: "" });
       setSubmitting(false);
       router.refresh();
     } catch {
@@ -67,6 +74,19 @@ export default function AddEmployeeForm() {
       <div>
         <label className={label}>Designation</label>
         <input className={input} value={form.designation} onChange={(e) => update("designation", e.target.value)} />
+      </div>
+      <div>
+        <label className={label}>Phone</label>
+        <input className={input} value={form.phone} onChange={(e) => update("phone", e.target.value)} />
+      </div>
+      <div>
+        <label className={label}>Employee code</label>
+        <input
+          className={input}
+          placeholder="e.g. EMP-0042"
+          value={form.employeeCode}
+          onChange={(e) => update("employeeCode", e.target.value)}
+        />
       </div>
       <button type="submit" className={btnPrimary} disabled={submitting}>
         {submitting ? "Adding..." : "Add employee"}

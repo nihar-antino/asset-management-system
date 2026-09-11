@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS employees (
   email TEXT UNIQUE NOT NULL,
   department TEXT,
   designation TEXT,
+  phone TEXT,
+  employee_code TEXT,                     -- internal employee ID/badge number
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -62,6 +64,10 @@ CREATE INDEX IF NOT EXISTS idx_maintenance_logs_asset ON maintenance_logs(asset_
 -- Prevents two assets from sharing a serial number (NULLs are exempt, so it's still optional)
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_assets_serial_number
   ON assets(serial_number) WHERE serial_number IS NOT NULL;
+
+-- Prevents two employees from sharing an employee code (NULLs are exempt, so it's still optional)
+CREATE UNIQUE INDEX IF NOT EXISTS uniq_employees_employee_code
+  ON employees(employee_code) WHERE employee_code IS NOT NULL;
 
 -- Ensures an asset can only have ONE active assignment at a time
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_active_assignment_per_asset

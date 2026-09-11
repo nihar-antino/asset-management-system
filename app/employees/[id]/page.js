@@ -25,11 +25,21 @@ export default async function EmployeeDetailPage({ params }) {
         ← Back to employees
       </Link>
 
-      <div className="mt-3 mb-6">
-        <h1 className="text-xl font-semibold">{employee.name}</h1>
-        <p className="text-sm text-ink-soft mt-0.5">
-          {employee.email} {employee.department ? `· ${employee.department}` : ""}
-        </p>
+      <div className="flex items-start justify-between mt-3 mb-6">
+        <div>
+          <h1 className="text-xl font-semibold">{employee.name}</h1>
+          <p className="text-sm text-ink-soft mt-0.5">
+            {employee.email} {employee.department ? `· ${employee.department}` : ""}
+          </p>
+          <p className="text-xs text-ink-soft mt-1">
+            {employee.employee_code ? `Employee code: ${employee.employee_code}` : ""}
+            {employee.employee_code && employee.phone ? " · " : ""}
+            {employee.phone ? `Phone: ${employee.phone}` : ""}
+          </p>
+        </div>
+        <Link href={`/employees/${employee.id}/edit`} className="text-sm text-primary font-medium hover:underline">
+          Edit
+        </Link>
       </div>
 
       <div className={card}>
