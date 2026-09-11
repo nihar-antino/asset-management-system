@@ -19,6 +19,7 @@ export default async function DashboardPage() {
     { label: "Total assets", value: stats.total },
     { label: "In stock", value: statusCount("IN_STOCK") },
     { label: "Assigned", value: statusCount("ASSIGNED") },
+    { label: "Under maintenance", value: statusCount("UNDER_MAINTENANCE") },
     { label: "Retired", value: statusCount("RETIRED") },
   ];
 
@@ -37,7 +38,7 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-5 gap-4 mb-8">
         {cards.map((c) => (
           <div key={c.label} className={`${card} p-5`}>
             <p className="text-sm text-ink-soft mb-2">{c.label}</p>

@@ -103,11 +103,28 @@ describe("PATCH /api/assets/:id", () => {
     expect(mockClient.query.mock.calls.some((c) => String(c[0]).startsWith("UPDATE assets SET"))).toBe(false);
   });
 
-  it("allows retiring an asset with no active assignment", async () => {
+  it("refuses to change status while an active maintenance record exists", async () => {
+    mockClient.query
+      .mockResolvedValueOnce({}) // BEGIN
+      .mockResolvedValueOnce({ rows: [{ id: 1 }] }) // SELECT asset ... FOR UPDATE
+      .mockResolvedValueOnce({ rows: [] }) // SELECT active assignment -> none
+      .mockResolvedValueOnce({ rows: [{ id: 7 }] }) // SELECT active maintenance
+      .mockResolvedValueOnce({}); // ROLLBACK
+
+    const res = await PATCH(makeRequest({ status: "IN_STOCK" }), makeParams("1"));
+
+    expect(res.status).toBe(409);
+    const data = await res.json();
+    expect(data.error).toMatch(/under maintenance/i);
+    expect(mockClient.query.mock.calls.some((c) => String(c[0]).startsWith("UPDATE assets SET"))).toBe(false);
+  });
+
+  it("allows retiring an asset with no active assignment or maintenance", async () => {
     mockClient.query
       .mockResolvedValueOnce({}) // BEGIN
       .mockResolvedValueOnce({ rows: [{ id: 2 }] }) // SELECT asset ... FOR UPDATE
       .mockResolvedValueOnce({ rows: [] }) // SELECT active assignment -> none
+      .mockResolvedValueOnce({ rows: [] }) // SELECT active maintenance -> none
       .mockResolvedValueOnce({ rows: [{ id: 2, status: "RETIRED" }] }) // UPDATE
       .mockResolvedValueOnce({}); // COMMIT
 

@@ -16,6 +16,8 @@
   --status-assigned-bg: #e9f1f8;
   --status-returned: #8a6d3b;
   --status-returned-bg: #f6efe2;
+  --status-maintenance: #b5680d;
+  --status-maintenance-bg: #fdf1e2;
   --status-retired: #b3261e;
   --status-retired-bg: #fbeceb;
 }
@@ -58,6 +60,7 @@ body {
 .status-in-stock { color: var(--status-in-stock); background: var(--status-in-stock-bg); }
 .status-assigned { color: var(--status-assigned); background: var(--status-assigned-bg); }
 .status-returned { color: var(--status-returned); background: var(--status-returned-bg); }
+.status-maintenance { color: var(--status-maintenance); background: var(--status-maintenance-bg); }
 .status-retired  { color: var(--status-retired);  background: var(--status-retired-bg); }
 
 :focus-visible {

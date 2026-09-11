@@ -2,6 +2,8 @@ import Link from "next/link";
 import StatusPill from "@/components/StatusPill";
 import ReturnAssetForm from "@/components/ReturnAssetForm";
 import RetireAssetForm from "@/components/RetireAssetForm";
+import SendForMaintenanceForm from "@/components/SendForMaintenanceForm";
+import ReturnFromMaintenanceForm from "@/components/ReturnFromMaintenanceForm";
 import { card } from "@/lib/ui";
 import { getAssetWithHistory } from "@/lib/assets";
 import { notFound } from "next/navigation";
@@ -22,8 +24,9 @@ export default async function AssetDetailPage({ params }) {
   const data = await getAssetWithHistory(id);
   if (!data) notFound();
 
-  const { asset, history } = data;
+  const { asset, history, maintenance } = data;
   const activeAssignment = history.find((h) => h.status === "ACTIVE");
+  const activeMaintenance = maintenance.find((m) => m.status === "ACTIVE");
 
   const specs = [
     ["Type", asset.type],
@@ -98,6 +101,33 @@ export default async function AssetDetailPage({ params }) {
               ))}
             </div>
           </div>
+
+          <div className={card}>
+            <div className="px-5 py-4 border-b border-border">
+              <h2 className="font-semibold text-sm">Maintenance history</h2>
+            </div>
+            <div className="p-2">
+              {maintenance.length === 0 && (
+                <p className="text-sm text-ink-soft px-3 py-4">
+                  This asset hasn't been sent for maintenance.
+                </p>
+              )}
+              {maintenance.map((m) => (
+                <div key={m.id} className="flex items-center justify-between px-3 py-3 border-b border-border last:border-0">
+                  <div>
+                    <p className="text-sm font-medium">{m.issue}</p>
+                    <p className="text-xs text-ink-soft mt-0.5">
+                      {m.vendor ? `${m.vendor} · ` : ""}
+                      {fmtDate(m.sent_date)} → {m.returned_date ? fmtDate(m.returned_date) : "present"}
+                      {m.cost ? ` · ${fmtMoney(m.cost)}` : ""}
+                    </p>
+                    {m.notes && <p className="text-xs text-ink-soft mt-0.5">{m.notes}</p>}
+                  </div>
+                  <StatusPill status={m.status} />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col gap-6">
@@ -132,7 +162,28 @@ export default async function AssetDetailPage({ params }) {
                 </Link>
               </div>
               <div className="px-5 pb-5 pt-1 border-t border-border">
+                <SendForMaintenanceForm assetId={asset.id} />
+              </div>
+              <div className="px-5 pb-5 pt-1 border-t border-border">
                 <RetireAssetForm assetId={asset.id} />
+              </div>
+            </div>
+          )}
+
+          {asset.status === "UNDER_MAINTENANCE" && activeMaintenance && (
+            <div className={card}>
+              <div className="px-5 py-4 border-b border-border">
+                <h2 className="font-semibold text-sm">Under maintenance</h2>
+              </div>
+              <div className="p-5">
+                <p className="text-sm font-medium">{activeMaintenance.issue}</p>
+                {activeMaintenance.vendor && (
+                  <p className="text-xs text-ink-soft mt-0.5">{activeMaintenance.vendor}</p>
+                )}
+                <p className="text-xs text-ink-soft mt-2">Sent {fmtDate(activeMaintenance.sent_date)}</p>
+              </div>
+              <div className="px-5 pb-5">
+                <ReturnFromMaintenanceForm maintenanceId={activeMaintenance.id} />
               </div>
             </div>
           )}

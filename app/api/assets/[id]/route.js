@@ -3,9 +3,10 @@ import { getAssetWithHistory } from "@/lib/assets";
 import { NextResponse } from "next/server";
 
 // Assets only ever move to these two statuses through this endpoint.
-// ASSIGNED is set exclusively by POST /api/assignments, which is the
-// only place that also creates the matching assignment row -- allowing
-// it here would let the two tables disagree about who has the asset.
+// ASSIGNED and UNDER_MAINTENANCE are set exclusively by POST
+// /api/assignments and POST /api/maintenance, which are the only places
+// that also create the matching assignment/maintenance row -- allowing
+// them here would let those tables disagree about who has the asset.
 const DIRECT_STATUS_VALUES = ["IN_STOCK", "RETIRED"];
 
 // GET /api/assets/:id -> asset details + full assignment history
@@ -83,14 +84,26 @@ export async function PATCH(request, { params }) {
         return NextResponse.json({ error: "Asset not found" }, { status: 404 });
       }
 
-      const activeRes = await client.query(
+      const activeAssignmentRes = await client.query(
         `SELECT id FROM assignments WHERE asset_id = $1 AND status = 'ACTIVE'`,
         [id]
       );
-      if (activeRes.rows.length > 0) {
+      if (activeAssignmentRes.rows.length > 0) {
         await client.query("ROLLBACK");
         return NextResponse.json(
           { error: "This asset is currently assigned. Return it before changing its status." },
+          { status: 409 }
+        );
+      }
+
+      const activeMaintenanceRes = await client.query(
+        `SELECT id FROM maintenance_logs WHERE asset_id = $1 AND status = 'ACTIVE'`,
+        [id]
+      );
+      if (activeMaintenanceRes.rows.length > 0) {
+        await client.query("ROLLBACK");
+        return NextResponse.json(
+          { error: "This asset is under maintenance. Mark it returned before changing its status." },
           { status: 409 }
         );
       }

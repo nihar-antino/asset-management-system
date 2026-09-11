@@ -6,7 +6,7 @@ import { listAssets } from "@/lib/assets";
 export const dynamic = "force-dynamic";
 
 const TYPES = ["LAPTOP", "PHONE", "MONITOR", "OTHER"];
-const STATUSES = ["IN_STOCK", "ASSIGNED", "RETIRED"];
+const STATUSES = ["IN_STOCK", "ASSIGNED", "UNDER_MAINTENANCE", "RETIRED"];
 
 function FilterLink({ label, active, href }) {
   return (
