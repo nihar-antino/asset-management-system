@@ -19,7 +19,7 @@ export async function GET(request) {
 }
 
 // POST /api/assets
-// Body: { assetTag, type, brand, model, serialNumber, vendor, purchaseDate, purchasePrice, warrantyExpiry, quantity }
+// Body: { assetTag, type, brand, model, serialNumber, vendor, ram, storage, os, purchaseDate, purchasePrice, warrantyExpiry, quantity }
 // If quantity > 1, creates multiple assets with auto-suffixed tags (bulk purchase entry)
 export async function POST(request) {
   try {
@@ -31,6 +31,9 @@ export async function POST(request) {
       model,
       serialNumber,
       vendor,
+      ram,
+      storage,
+      os,
       purchaseDate,
       purchasePrice,
       warrantyExpiry,
@@ -52,8 +55,8 @@ export async function POST(request) {
 
       const result = await query(
         `INSERT INTO assets
-          (asset_tag, type, brand, model, serial_number, vendor, purchase_date, purchase_price, warranty_expiry)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+          (asset_tag, type, brand, model, serial_number, vendor, purchase_date, purchase_price, warranty_expiry, ram, storage, os)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
          RETURNING *`,
         [
           tag,
@@ -65,6 +68,9 @@ export async function POST(request) {
           purchaseDate || null,
           purchasePrice || null,
           warrantyExpiry || null,
+          ram || null,
+          storage || null,
+          os || null,
         ]
       );
       created.push(result.rows[0]);

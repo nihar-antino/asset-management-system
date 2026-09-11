@@ -14,6 +14,9 @@ export default function NewAssetPage() {
     model: "",
     serialNumber: "",
     vendor: "",
+    ram: "",
+    storage: "",
+    os: "",
     purchaseDate: "",
     purchasePrice: "",
     warrantyExpiry: "",
@@ -137,6 +140,36 @@ export default function NewAssetPage() {
             value={form.vendor}
             onChange={(e) => update("vendor", e.target.value)}
           />
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className={label}>RAM</label>
+            <input
+              className={input}
+              placeholder="16GB"
+              value={form.ram}
+              onChange={(e) => update("ram", e.target.value)}
+            />
+          </div>
+          <div>
+            <label className={label}>Storage</label>
+            <input
+              className={input}
+              placeholder="512GB SSD"
+              value={form.storage}
+              onChange={(e) => update("storage", e.target.value)}
+            />
+          </div>
+          <div>
+            <label className={label}>OS</label>
+            <input
+              className={input}
+              placeholder="Windows 11 Pro"
+              value={form.os}
+              onChange={(e) => update("os", e.target.value)}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-3 gap-4">

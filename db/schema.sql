@@ -17,6 +17,9 @@ CREATE TABLE IF NOT EXISTS assets (
   model TEXT,
   serial_number TEXT,
   vendor TEXT,
+  ram TEXT,                                -- e.g. 16GB
+  storage TEXT,                            -- e.g. 512GB SSD
+  os TEXT,                                 -- e.g. Windows 11 Pro
   purchase_date DATE,
   purchase_price NUMERIC(12,2),
   warranty_expiry DATE,
