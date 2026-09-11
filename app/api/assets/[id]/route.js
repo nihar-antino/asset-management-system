@@ -1,4 +1,5 @@
 import { query } from "@/lib/db";
+import { getAssetWithHistory } from "@/lib/assets";
 import { NextResponse } from "next/server";
 
 // GET /api/assets/:id -> asset details + full assignment history
@@ -6,24 +7,12 @@ export async function GET(request, { params }) {
   try {
     const { id } = await params;
 
-    const assetRes = await query(`SELECT * FROM assets WHERE id = $1`, [id]);
-    if (assetRes.rows.length === 0) {
+    const data = await getAssetWithHistory(id);
+    if (!data) {
       return NextResponse.json({ error: "Asset not found" }, { status: 404 });
     }
 
-    const historyRes = await query(
-      `SELECT asg.*, e.name as employee_name, e.email as employee_email, e.department
-       FROM assignments asg
-       JOIN employees e ON e.id = asg.employee_id
-       WHERE asg.asset_id = $1
-       ORDER BY asg.assigned_date DESC, asg.id DESC`,
-      [id]
-    );
-
-    return NextResponse.json({
-      asset: assetRes.rows[0],
-      history: historyRes.rows,
-    });
+    return NextResponse.json(data);
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });

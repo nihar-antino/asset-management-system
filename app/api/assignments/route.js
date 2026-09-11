@@ -1,31 +1,13 @@
 import { query, getClient } from "@/lib/db";
+import { listAssignments } from "@/lib/assignments";
 import { NextResponse } from "next/server";
 
 // GET /api/assignments?status=ACTIVE
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status");
-
-    const params = [];
-    let where = "";
-    if (status) {
-      params.push(status);
-      where = `WHERE asg.status = $1`;
-    }
-
-    const sql = `
-      SELECT asg.*, a.asset_tag, a.type, a.brand, a.model,
-             e.name as employee_name, e.email as employee_email
-      FROM assignments asg
-      JOIN assets a ON a.id = asg.asset_id
-      JOIN employees e ON e.id = asg.employee_id
-      ${where}
-      ORDER BY asg.assigned_date DESC, asg.id DESC
-    `;
-
-    const result = await query(sql, params);
-    return NextResponse.json({ assignments: result.rows });
+    const assignments = await listAssignments({ status: searchParams.get("status") });
+    return NextResponse.json({ assignments });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });

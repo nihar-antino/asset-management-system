@@ -1,31 +1,13 @@
 import { query } from "@/lib/db";
+import { listEmployees } from "@/lib/employees";
 import { NextResponse } from "next/server";
 
 // GET /api/employees?search=
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get("search");
-
-    const params = [];
-    let where = "";
-    if (search) {
-      params.push(`%${search}%`);
-      where = `WHERE e.name ILIKE $1 OR e.email ILIKE $1 OR e.department ILIKE $1`;
-    }
-
-    const sql = `
-      SELECT e.*,
-        COUNT(asg.id) FILTER (WHERE asg.status = 'ACTIVE') as active_asset_count
-      FROM employees e
-      LEFT JOIN assignments asg ON asg.employee_id = e.id
-      ${where}
-      GROUP BY e.id
-      ORDER BY e.created_at DESC
-    `;
-
-    const result = await query(sql, params);
-    return NextResponse.json({ employees: result.rows });
+    const employees = await listEmployees({ search: searchParams.get("search") });
+    return NextResponse.json({ employees });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });

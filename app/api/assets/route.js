@@ -1,46 +1,17 @@
 import { query } from "@/lib/db";
+import { listAssets } from "@/lib/assets";
 import { NextResponse } from "next/server";
 
 // GET /api/assets?type=LAPTOP&status=IN_STOCK&search=abc
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const type = searchParams.get("type");
-    const status = searchParams.get("status");
-    const search = searchParams.get("search");
-
-    const conditions = [];
-    const params = [];
-
-    if (type) {
-      params.push(type);
-      conditions.push(`a.type = $${params.length}`);
-    }
-    if (status) {
-      params.push(status);
-      conditions.push(`a.status = $${params.length}`);
-    }
-    if (search) {
-      params.push(`%${search}%`);
-      conditions.push(
-        `(a.asset_tag ILIKE $${params.length} OR a.brand ILIKE $${params.length} OR a.model ILIKE $${params.length} OR a.serial_number ILIKE $${params.length})`
-      );
-    }
-
-    const where = conditions.length ? `WHERE ${conditions.join(" AND ")}` : "";
-
-    const sql = `
-      SELECT a.*,
-        e.id as current_employee_id, e.name as current_employee_name
-      FROM assets a
-      LEFT JOIN assignments asg ON asg.asset_id = a.id AND asg.status = 'ACTIVE'
-      LEFT JOIN employees e ON e.id = asg.employee_id
-      ${where}
-      ORDER BY a.created_at DESC
-    `;
-
-    const result = await query(sql, params);
-    return NextResponse.json({ assets: result.rows });
+    const assets = await listAssets({
+      type: searchParams.get("type"),
+      status: searchParams.get("status"),
+      search: searchParams.get("search"),
+    });
+    return NextResponse.json({ assets });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });

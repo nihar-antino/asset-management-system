@@ -1,15 +1,8 @@
 import Link from "next/link";
 import StatusPill from "@/components/StatusPill";
 import { card } from "@/lib/ui";
-import { getBaseUrl } from "@/lib/baseUrl";
+import { getEmployeeWithHistory } from "@/lib/employees";
 import { notFound } from "next/navigation";
-
-async function getEmployee(id) {
-  const res = await fetch(`${getBaseUrl()}/api/employees/${id}`, { cache: "no-store" });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error("Failed to load employee");
-  return res.json();
-}
 
 function fmtDate(d) {
   if (!d) return "—";
@@ -18,7 +11,7 @@ function fmtDate(d) {
 
 export default async function EmployeeDetailPage({ params }) {
   const { id } = await params;
-  const data = await getEmployee(id);
+  const data = await getEmployeeWithHistory(id);
   if (!data) notFound();
 
   const { employee, history } = data;

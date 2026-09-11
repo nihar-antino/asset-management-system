@@ -3,13 +3,7 @@ import { Suspense } from "react";
 import StatusPill from "@/components/StatusPill";
 import AssignForm from "@/components/AssignForm";
 import { card } from "@/lib/ui";
-import { getBaseUrl } from "@/lib/baseUrl";
-
-async function getActiveAssignments() {
-  const res = await fetch(`${getBaseUrl()}/api/assignments?status=ACTIVE`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to load assignments");
-  return res.json();
-}
+import { listAssignments } from "@/lib/assignments";
 
 function fmtDate(d) {
   if (!d) return "—";
@@ -17,7 +11,7 @@ function fmtDate(d) {
 }
 
 export default async function AssignPage() {
-  const { assignments } = await getActiveAssignments();
+  const assignments = await listAssignments({ status: "ACTIVE" });
 
   return (
     <div>

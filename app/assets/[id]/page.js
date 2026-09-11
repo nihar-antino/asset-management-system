@@ -2,15 +2,8 @@ import Link from "next/link";
 import StatusPill from "@/components/StatusPill";
 import ReturnAssetForm from "@/components/ReturnAssetForm";
 import { card } from "@/lib/ui";
-import { getBaseUrl } from "@/lib/baseUrl";
+import { getAssetWithHistory } from "@/lib/assets";
 import { notFound } from "next/navigation";
-
-async function getAsset(id) {
-  const res = await fetch(`${getBaseUrl()}/api/assets/${id}`, { cache: "no-store" });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error("Failed to load asset");
-  return res.json();
-}
 
 function fmtDate(d) {
   if (!d) return "—";
@@ -23,7 +16,7 @@ function fmtMoney(v) {
 
 export default async function AssetDetailPage({ params }) {
   const { id } = await params;
-  const data = await getAsset(id);
+  const data = await getAssetWithHistory(id);
   if (!data) notFound();
 
   const { asset, history } = data;

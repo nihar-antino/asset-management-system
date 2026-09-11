@@ -1,13 +1,7 @@
 import Link from "next/link";
 import StatusPill from "@/components/StatusPill";
 import { card } from "@/lib/ui";
-import { getBaseUrl } from "@/lib/baseUrl";
-
-async function getStats() {
-  const res = await fetch(`${getBaseUrl()}/api/dashboard`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to load dashboard");
-  return res.json();
-}
+import { getDashboardStats } from "@/lib/dashboard";
 
 function fmtDate(d) {
   if (!d) return "—";
@@ -15,7 +9,7 @@ function fmtDate(d) {
 }
 
 export default async function DashboardPage() {
-  const stats = await getStats();
+  const stats = await getDashboardStats();
 
   const statusCount = (s) => stats.byStatus.find((x) => x.status === s)?.count || 0;
 

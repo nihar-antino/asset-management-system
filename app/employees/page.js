@@ -1,16 +1,10 @@
 import Link from "next/link";
 import { card, th, td } from "@/lib/ui";
-import { getBaseUrl } from "@/lib/baseUrl";
+import { listEmployees } from "@/lib/employees";
 import AddEmployeeForm from "@/components/AddEmployeeForm";
 
-async function getEmployees() {
-  const res = await fetch(`${getBaseUrl()}/api/employees`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to load employees");
-  return res.json();
-}
-
 export default async function EmployeesPage() {
-  const { employees } = await getEmployees();
+  const employees = await listEmployees();
 
   return (
     <div>

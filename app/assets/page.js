@@ -1,18 +1,7 @@
 import Link from "next/link";
 import StatusPill from "@/components/StatusPill";
 import { card, th, td } from "@/lib/ui";
-import { getBaseUrl } from "@/lib/baseUrl";
-
-async function getAssets(searchParams) {
-  const params = new URLSearchParams();
-  if (searchParams.type) params.set("type", searchParams.type);
-  if (searchParams.status) params.set("status", searchParams.status);
-  if (searchParams.search) params.set("search", searchParams.search);
-
-  const res = await fetch(`${getBaseUrl()}/api/assets?${params.toString()}`, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to load assets");
-  return res.json();
-}
+import { listAssets } from "@/lib/assets";
 
 const TYPES = ["LAPTOP", "PHONE", "MONITOR", "OTHER"];
 const STATUSES = ["IN_STOCK", "ASSIGNED", "RETIRED"];
@@ -39,7 +28,7 @@ function fmtMoney(v) {
 
 export default async function AssetsPage({ searchParams }) {
   const sp = await searchParams;
-  const { assets } = await getAssets(sp);
+  const assets = await listAssets({ type: sp.type, status: sp.status, search: sp.search });
 
   const buildHref = (key, value) => {
     const params = new URLSearchParams(sp);
