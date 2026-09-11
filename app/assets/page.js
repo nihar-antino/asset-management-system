@@ -67,6 +67,31 @@ export default async function AssetsPage({ searchParams }) {
         ))}
       </div>
 
+      <form action="/assets" method="get" className="mb-5">
+        {sp.type && <input type="hidden" name="type" value={sp.type} />}
+        {sp.status && <input type="hidden" name="status" value={sp.status} />}
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            name="search"
+            defaultValue={sp.search || ""}
+            placeholder="Search by brand, model, tag, or serial number..."
+            className="w-full max-w-sm px-3 py-2 rounded border border-border bg-surface text-sm text-ink placeholder:text-ink-soft focus:border-primary focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 rounded border border-border text-sm font-medium text-ink-soft hover:bg-bg"
+          >
+            Search
+          </button>
+          {sp.search && (
+            <Link href={buildHref("search", null)} className="text-sm text-ink-soft hover:text-ink">
+              Clear
+            </Link>
+          )}
+        </div>
+      </form>
+
       <div className={`${card} overflow-hidden`}>
         <table className="w-full">
           <thead>
