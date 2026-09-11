@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --ink: #14181f;
+  --ink-soft: #5b6472;
+  --border: #e2e5ea;
+
+  --primary: #26364a;
+  --primary-hover: #1b2734;
+
+  --status-in-stock: #2f8f5b;
+  --status-in-stock-bg: #e8f5ee;
+  --status-assigned: #3d6e9e;
+  --status-assigned-bg: #e9f1f8;
+  --status-returned: #8a6d3b;
+  --status-returned-bg: #f6efe2;
+  --status-retired: #b3261e;
+  --status-retired-bg: #fbeceb;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-tag {
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status-in-stock { color: var(--status-in-stock); background: var(--status-in-stock-bg); }
+.status-assigned { color: var(--status-assigned); background: var(--status-assigned-bg); }
+.status-returned { color: var(--status-returned); background: var(--status-returned-bg); }
+.status-retired  { color: var(--status-retired);  background: var(--status-retired-bg); }
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
