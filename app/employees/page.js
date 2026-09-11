@@ -23,12 +23,12 @@ function FilterLink({ label, active, href }) {
 
 export default async function EmployeesPage({ searchParams }) {
   const sp = await searchParams;
-  const employees = await listEmployees({ status: sp.status });
+  const employees = await listEmployees({ status: sp.status, search: sp.search });
 
-  const buildHref = (value) => {
+  const buildHref = (key, value) => {
     const params = new URLSearchParams(sp);
-    if (value) params.set("status", value);
-    else params.delete("status");
+    if (value) params.set(key, value);
+    else params.delete(key);
     const qs = params.toString();
     return qs ? `/employees?${qs}` : "/employees";
   };
@@ -43,11 +43,40 @@ export default async function EmployeesPage({ searchParams }) {
       <div className="grid grid-cols-3 gap-6">
         <div className="col-span-2">
           <div className="flex flex-wrap items-center gap-2 mb-4">
-            <FilterLink label="All" active={!sp.status} href={buildHref(null)} />
+            <FilterLink label="All" active={!sp.status} href={buildHref("status", null)} />
             {STATUSES.map((s) => (
-              <FilterLink key={s} label={s === "ACTIVE" ? "Active" : "Inactive"} active={sp.status === s} href={buildHref(s)} />
+              <FilterLink
+                key={s}
+                label={s === "ACTIVE" ? "Active" : "Inactive"}
+                active={sp.status === s}
+                href={buildHref("status", s)}
+              />
             ))}
           </div>
+
+          <form action="/employees" method="get" className="mb-4">
+            {sp.status && <input type="hidden" name="status" value={sp.status} />}
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                name="search"
+                defaultValue={sp.search || ""}
+                placeholder="Search by name, email, or department..."
+                className="w-full max-w-sm px-3 py-2 rounded border border-border bg-surface text-sm text-ink placeholder:text-ink-soft focus:border-primary focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 rounded border border-border text-sm font-medium text-ink-soft hover:bg-bg"
+              >
+                Search
+              </button>
+              {sp.search && (
+                <Link href={buildHref("search", null)} className="text-sm text-ink-soft hover:text-ink">
+                  Clear
+                </Link>
+              )}
+            </div>
+          </form>
 
           <div className={`${card} overflow-hidden`}>
             <table className="w-full">
