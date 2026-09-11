@@ -37,6 +37,7 @@ export default async function AssetDetailPage({ params }) {
     ["Unit price", fmtMoney(asset.purchase_price)],
     ["Warranty until", fmtDate(asset.warranty_expiry)],
     ["Condition", asset.condition],
+    ["Notes", asset.notes || "—"],
   ];
 
   return (
