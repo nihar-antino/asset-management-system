@@ -3,6 +3,8 @@ import { card, th, td } from "@/lib/ui";
 import { listEmployees } from "@/lib/employees";
 import AddEmployeeForm from "@/components/AddEmployeeForm";
 
+export const dynamic = "force-dynamic";
+
 export default async function EmployeesPage() {
   const employees = await listEmployees();
 

@@ -4,6 +4,8 @@ import { card } from "@/lib/ui";
 import { getEmployeeWithHistory } from "@/lib/employees";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 function fmtDate(d) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });

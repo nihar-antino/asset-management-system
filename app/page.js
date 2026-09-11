@@ -3,6 +3,8 @@ import StatusPill from "@/components/StatusPill";
 import { card } from "@/lib/ui";
 import { getDashboardStats } from "@/lib/dashboard";
 
+export const dynamic = "force-dynamic";
+
 function fmtDate(d) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });

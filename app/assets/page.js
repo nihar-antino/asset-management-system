@@ -3,6 +3,8 @@ import StatusPill from "@/components/StatusPill";
 import { card, th, td } from "@/lib/ui";
 import { listAssets } from "@/lib/assets";
 
+export const dynamic = "force-dynamic";
+
 const TYPES = ["LAPTOP", "PHONE", "MONITOR", "OTHER"];
 const STATUSES = ["IN_STOCK", "ASSIGNED", "RETIRED"];
 

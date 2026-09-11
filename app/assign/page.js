@@ -5,6 +5,8 @@ import AssignForm from "@/components/AssignForm";
 import { card } from "@/lib/ui";
 import { listAssignments } from "@/lib/assignments";
 
+export const dynamic = "force-dynamic";
+
 function fmtDate(d) {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
