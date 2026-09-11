@@ -12,7 +12,7 @@ export default function EmployeeStatusToggle({ employeeId, employmentStatus }) {
   const isActive = employmentStatus === "ACTIVE";
   const nextStatus = isActive ? "INACTIVE" : "ACTIVE";
   const confirmMessage = isActive
-    ? "Mark this employee as inactive? They can no longer be assigned new equipment."
+    ? "Mark this employee as inactive? Any assets currently assigned to them will be returned to stock, and they can no longer be assigned new equipment."
     : "Mark this employee as active again?";
 
   async function handleToggle() {
