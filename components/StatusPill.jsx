@@ -5,6 +5,7 @@ const LABELS = {
   UNDER_MAINTENANCE: "Under maintenance",
   RETIRED: "Retired",
   ACTIVE: "Active",
+  INACTIVE: "Inactive",
 };
 
 const CLASS_MAP = {
@@ -14,6 +15,7 @@ const CLASS_MAP = {
   RETURNED: "status-returned",
   UNDER_MAINTENANCE: "status-maintenance",
   RETIRED: "status-retired",
+  INACTIVE: "status-retired",
 };
 
 export default function StatusPill({ status }) {

@@ -2,11 +2,14 @@ import { query } from "@/lib/db";
 import { listEmployees } from "@/lib/employees";
 import { NextResponse } from "next/server";
 
-// GET /api/employees?search=
+// GET /api/employees?search=&status=ACTIVE
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
-    const employees = await listEmployees({ search: searchParams.get("search") });
+    const employees = await listEmployees({
+      search: searchParams.get("search"),
+      status: searchParams.get("status"),
+    });
     return NextResponse.json({ employees });
   } catch (err) {
     console.error(err);

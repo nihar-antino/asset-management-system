@@ -22,7 +22,7 @@ export default function AssignForm() {
     setLoading(true);
     const [assetsRes, employeesRes] = await Promise.all([
       fetch("/api/assets?status=IN_STOCK"),
-      fetch("/api/employees"),
+      fetch("/api/employees?status=ACTIVE"),
     ]);
     const assetsData = await assetsRes.json();
     const employeesData = await employeesRes.json();

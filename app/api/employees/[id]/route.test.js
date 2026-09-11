@@ -30,6 +30,23 @@ describe("PATCH /api/employees/:id", () => {
     expect(query).not.toHaveBeenCalled();
   });
 
+  it("rejects an invalid employment_status without touching the DB", async () => {
+    const res = await PATCH(makeRequest({ employment_status: "ON_LEAVE" }), makeParams("1"));
+
+    expect(res.status).toBe(400);
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  it("allows marking an employee INACTIVE", async () => {
+    query.mockResolvedValueOnce({ rows: [{ id: 1, employment_status: "INACTIVE" }] });
+
+    const res = await PATCH(makeRequest({ employment_status: "INACTIVE" }), makeParams("1"));
+
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.employee.employment_status).toBe("INACTIVE");
+  });
+
   it("updates the given fields", async () => {
     query.mockResolvedValueOnce({ rows: [{ id: 1, phone: "8888" }] });
 

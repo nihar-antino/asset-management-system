@@ -1,5 +1,6 @@
 import Link from "next/link";
 import StatusPill from "@/components/StatusPill";
+import EmployeeStatusToggle from "@/components/EmployeeStatusToggle";
 import { card } from "@/lib/ui";
 import { getEmployeeWithHistory } from "@/lib/employees";
 import { notFound } from "next/navigation";
@@ -36,9 +37,12 @@ export default async function EmployeeDetailPage({ params }) {
 
       <div className="flex items-start justify-between mt-3 mb-6">
         <h1 className="text-xl font-semibold">{employee.name}</h1>
-        <Link href={`/employees/${employee.id}/edit`} className="text-sm text-primary font-medium hover:underline">
-          Edit
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href={`/employees/${employee.id}/edit`} className="text-sm text-primary font-medium hover:underline">
+            Edit
+          </Link>
+          <StatusPill status={employee.employment_status} />
+        </div>
       </div>
 
       <div className={`${card} mb-6`}>
@@ -52,6 +56,9 @@ export default async function EmployeeDetailPage({ params }) {
               <p className="text-sm mt-0.5">{v}</p>
             </div>
           ))}
+        </div>
+        <div className="px-5 pb-5 pt-1 border-t border-border">
+          <EmployeeStatusToggle employeeId={employee.id} employmentStatus={employee.employment_status} />
         </div>
       </div>
 

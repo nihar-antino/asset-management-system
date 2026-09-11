@@ -43,6 +43,21 @@ export async function POST(request) {
         );
       }
 
+      const employeeRes = await client.query(`SELECT id, employment_status FROM employees WHERE id = $1`, [
+        employeeId,
+      ]);
+      if (employeeRes.rows.length === 0) {
+        await client.query("ROLLBACK");
+        return NextResponse.json({ error: "Employee not found" }, { status: 404 });
+      }
+      if (employeeRes.rows[0].employment_status !== "ACTIVE") {
+        await client.query("ROLLBACK");
+        return NextResponse.json(
+          { error: "This employee is marked inactive and can't be assigned new equipment" },
+          { status: 409 }
+        );
+      }
+
       const assignRes = await client.query(
         `INSERT INTO assignments (asset_id, employee_id, assigned_date, notes)
          VALUES ($1,$2,COALESCE($3, CURRENT_DATE),$4) RETURNING *`,

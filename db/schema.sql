@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS employees (
   designation TEXT,
   phone TEXT,
   employee_code TEXT,                     -- internal employee ID/badge number
+  employment_status TEXT NOT NULL DEFAULT 'ACTIVE', -- ACTIVE, INACTIVE
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

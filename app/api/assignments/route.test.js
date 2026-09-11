@@ -58,10 +58,37 @@ describe("POST /api/assignments", () => {
     expect(data.error).toMatch(/ASSIGNED/);
   });
 
+  it("404s when the employee doesn't exist", async () => {
+    mockClient.query
+      .mockResolvedValueOnce({}) // BEGIN
+      .mockResolvedValueOnce({ rows: [{ id: 1, status: "IN_STOCK" }] }) // SELECT asset
+      .mockResolvedValueOnce({ rows: [] }) // SELECT employee
+      .mockResolvedValueOnce({}); // ROLLBACK
+
+    const res = await POST(makeRequest({ assetId: 1, employeeId: 999 }));
+
+    expect(res.status).toBe(404);
+  });
+
+  it("refuses to assign to an inactive employee", async () => {
+    mockClient.query
+      .mockResolvedValueOnce({}) // BEGIN
+      .mockResolvedValueOnce({ rows: [{ id: 1, status: "IN_STOCK" }] }) // SELECT asset
+      .mockResolvedValueOnce({ rows: [{ id: 2, employment_status: "INACTIVE" }] }) // SELECT employee
+      .mockResolvedValueOnce({}); // ROLLBACK
+
+    const res = await POST(makeRequest({ assetId: 1, employeeId: 2 }));
+
+    expect(res.status).toBe(409);
+    const data = await res.json();
+    expect(data.error).toMatch(/inactive/i);
+  });
+
   it("creates the assignment and marks the asset ASSIGNED", async () => {
     mockClient.query
       .mockResolvedValueOnce({}) // BEGIN
       .mockResolvedValueOnce({ rows: [{ id: 1, status: "IN_STOCK" }] }) // SELECT asset
+      .mockResolvedValueOnce({ rows: [{ id: 2, employment_status: "ACTIVE" }] }) // SELECT employee
       .mockResolvedValueOnce({ rows: [{ id: 10, asset_id: 1, employee_id: 2 }] }) // INSERT assignment
       .mockResolvedValueOnce({}) // UPDATE assets status
       .mockResolvedValueOnce({}); // COMMIT

@@ -2,6 +2,8 @@ import { query } from "@/lib/db";
 import { getEmployeeWithHistory } from "@/lib/employees";
 import { NextResponse } from "next/server";
 
+const EMPLOYMENT_STATUS_VALUES = ["ACTIVE", "INACTIVE"];
+
 // GET /api/employees/:id -> employee + all assets ever assigned to them
 export async function GET(request, { params }) {
   try {
@@ -24,7 +26,14 @@ export async function PATCH(request, { params }) {
   try {
     const { id } = await params;
     const body = await request.json();
-    const allowed = ["name", "email", "department", "designation", "phone", "employee_code"];
+    const allowed = ["name", "email", "department", "designation", "phone", "employee_code", "employment_status"];
+
+    if ("employment_status" in body && !EMPLOYMENT_STATUS_VALUES.includes(body.employment_status)) {
+      return NextResponse.json(
+        { error: `employment_status must be one of: ${EMPLOYMENT_STATUS_VALUES.join(", ")}` },
+        { status: 400 }
+      );
+    }
 
     const sets = [];
     const values = [];

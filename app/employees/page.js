@@ -1,12 +1,37 @@
 import Link from "next/link";
+import StatusPill from "@/components/StatusPill";
 import { card, th, td } from "@/lib/ui";
 import { listEmployees } from "@/lib/employees";
 import AddEmployeeForm from "@/components/AddEmployeeForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function EmployeesPage() {
-  const employees = await listEmployees();
+const STATUSES = ["ACTIVE", "INACTIVE"];
+
+function FilterLink({ label, active, href }) {
+  return (
+    <Link
+      href={href}
+      className={`px-3 py-1.5 rounded text-sm font-medium border ${
+        active ? "bg-primary text-white border-primary" : "border-border text-ink-soft hover:bg-bg"
+      }`}
+    >
+      {label}
+    </Link>
+  );
+}
+
+export default async function EmployeesPage({ searchParams }) {
+  const sp = await searchParams;
+  const employees = await listEmployees({ status: sp.status });
+
+  const buildHref = (value) => {
+    const params = new URLSearchParams(sp);
+    if (value) params.set("status", value);
+    else params.delete("status");
+    const qs = params.toString();
+    return qs ? `/employees?${qs}` : "/employees";
+  };
 
   return (
     <div>
@@ -17,6 +42,13 @@ export default async function EmployeesPage() {
 
       <div className="grid grid-cols-3 gap-6">
         <div className="col-span-2">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <FilterLink label="All" active={!sp.status} href={buildHref(null)} />
+            {STATUSES.map((s) => (
+              <FilterLink key={s} label={s === "ACTIVE" ? "Active" : "Inactive"} active={sp.status === s} href={buildHref(s)} />
+            ))}
+          </div>
+
           <div className={`${card} overflow-hidden`}>
             <table className="w-full">
               <thead>
@@ -24,13 +56,14 @@ export default async function EmployeesPage() {
                   <th className={th}>Name</th>
                   <th className={th}>Department</th>
                   <th className={th}>Active assets</th>
+                  <th className={th}>Status</th>
                   <th className={th}></th>
                 </tr>
               </thead>
               <tbody>
                 {employees.length === 0 && (
                   <tr>
-                    <td className={td} colSpan={4}>
+                    <td className={td} colSpan={5}>
                       <p className="text-ink-soft py-4 text-center">No employees yet.</p>
                     </td>
                   </tr>
@@ -43,6 +76,9 @@ export default async function EmployeesPage() {
                     </td>
                     <td className={td}>{e.department || "—"}</td>
                     <td className={td}>{e.active_asset_count}</td>
+                    <td className={td}>
+                      <StatusPill status={e.employment_status} />
+                    </td>
                     <td className={td}>
                       <Link href={`/employees/${e.id}`} className="text-primary text-sm font-medium hover:underline">
                         View
