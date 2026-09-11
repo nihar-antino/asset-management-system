@@ -19,6 +19,15 @@ export default async function EmployeeDetailPage({ params }) {
   const { employee, history } = data;
   const active = history.filter((h) => h.status === "ACTIVE");
 
+  const profile = [
+    ["Email", employee.email],
+    ["Department", employee.department || "—"],
+    ["Designation", employee.designation || "—"],
+    ["Phone", employee.phone || "—"],
+    ["Employee code", employee.employee_code || "—"],
+    ["Joined directory", fmtDate(employee.created_at)],
+  ];
+
   return (
     <div>
       <Link href="/employees" className="text-sm text-ink-soft hover:text-ink">
@@ -26,20 +35,24 @@ export default async function EmployeeDetailPage({ params }) {
       </Link>
 
       <div className="flex items-start justify-between mt-3 mb-6">
-        <div>
-          <h1 className="text-xl font-semibold">{employee.name}</h1>
-          <p className="text-sm text-ink-soft mt-0.5">
-            {employee.email} {employee.department ? `· ${employee.department}` : ""}
-          </p>
-          <p className="text-xs text-ink-soft mt-1">
-            {employee.employee_code ? `Employee code: ${employee.employee_code}` : ""}
-            {employee.employee_code && employee.phone ? " · " : ""}
-            {employee.phone ? `Phone: ${employee.phone}` : ""}
-          </p>
-        </div>
+        <h1 className="text-xl font-semibold">{employee.name}</h1>
         <Link href={`/employees/${employee.id}/edit`} className="text-sm text-primary font-medium hover:underline">
           Edit
         </Link>
+      </div>
+
+      <div className={`${card} mb-6`}>
+        <div className="px-5 py-4 border-b border-border">
+          <h2 className="font-semibold text-sm">Profile</h2>
+        </div>
+        <div className="p-5 grid grid-cols-2 gap-y-3 gap-x-6">
+          {profile.map(([k, v]) => (
+            <div key={k}>
+              <p className="text-xs text-ink-soft">{k}</p>
+              <p className="text-sm mt-0.5">{v}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className={card}>
