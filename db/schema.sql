@@ -42,6 +42,10 @@ CREATE INDEX IF NOT EXISTS idx_assignments_asset ON assignments(asset_id);
 CREATE INDEX IF NOT EXISTS idx_assignments_employee ON assignments(employee_id);
 CREATE INDEX IF NOT EXISTS idx_assets_status ON assets(status);
 
+-- Prevents two assets from sharing a serial number (NULLs are exempt, so it's still optional)
+CREATE UNIQUE INDEX IF NOT EXISTS uniq_assets_serial_number
+  ON assets(serial_number) WHERE serial_number IS NOT NULL;
+
 -- Ensures an asset can only have ONE active assignment at a time
 CREATE UNIQUE INDEX IF NOT EXISTS uniq_active_assignment_per_asset
   ON assignments(asset_id) WHERE status = 'ACTIVE';

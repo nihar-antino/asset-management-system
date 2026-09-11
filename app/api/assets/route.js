@@ -74,6 +74,9 @@ export async function POST(request) {
   } catch (err) {
     console.error(err);
     if (err.code === "23505") {
+      if (err.constraint === "uniq_assets_serial_number") {
+        return NextResponse.json({ error: "Serial number already exists on another asset" }, { status: 409 });
+      }
       return NextResponse.json({ error: "Asset tag already exists" }, { status: 409 });
     }
     return NextResponse.json({ error: err.message }, { status: 500 });

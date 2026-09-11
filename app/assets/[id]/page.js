@@ -1,6 +1,7 @@
 import Link from "next/link";
 import StatusPill from "@/components/StatusPill";
 import ReturnAssetForm from "@/components/ReturnAssetForm";
+import RetireAssetForm from "@/components/RetireAssetForm";
 import { card } from "@/lib/ui";
 import { getAssetWithHistory } from "@/lib/assets";
 import { notFound } from "next/navigation";
@@ -48,7 +49,12 @@ export default async function AssetDetailPage({ params }) {
             {[asset.brand, asset.model].filter(Boolean).join(" ") || asset.type}
           </p>
         </div>
-        <StatusPill status={asset.status} />
+        <div className="flex items-center gap-4">
+          <Link href={`/assets/${asset.id}/edit`} className="text-sm text-primary font-medium hover:underline">
+            Edit
+          </Link>
+          <StatusPill status={asset.status} />
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-6">
@@ -124,6 +130,9 @@ export default async function AssetDetailPage({ params }) {
                 <Link href={`/assign?assetId=${asset.id}`} className="text-primary text-sm font-medium hover:underline">
                   Assign to an employee →
                 </Link>
+              </div>
+              <div className="px-5 pb-5 pt-1 border-t border-border">
+                <RetireAssetForm assetId={asset.id} />
               </div>
             </div>
           )}

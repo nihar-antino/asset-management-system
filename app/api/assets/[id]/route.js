@@ -41,7 +41,11 @@ export async function PATCH(request, { params }) {
     const values = [];
     for (const key of allowed) {
       if (key in body) {
-        values.push(body[key]);
+        // Empty string means "clear this field" -- store NULL rather than ""
+        // so date/numeric columns don't fail to cast and unique checks
+        // (e.g. serial_number) treat it as absent rather than a real value.
+        const value = body[key] === "" ? null : body[key];
+        values.push(value);
         sets.push(`${key} = $${values.length}`);
       }
     }
@@ -63,6 +67,12 @@ export async function PATCH(request, { params }) {
     return NextResponse.json({ asset: result.rows[0] });
   } catch (err) {
     console.error(err);
+    if (err.code === "23505") {
+      if (err.constraint === "uniq_assets_serial_number") {
+        return NextResponse.json({ error: "Serial number already exists on another asset" }, { status: 409 });
+      }
+      return NextResponse.json({ error: "Asset tag already exists" }, { status: 409 });
+    }
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
